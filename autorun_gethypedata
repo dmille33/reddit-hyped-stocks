@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Mar 21 20:27:08 2021
+
+@author: davidmiller
+"""
+
+cd $/Users/davidmiller/Documents/GitHub/reddit-hyped-stocks
+./run-load-data-docker.sh
+
+echo "Cron job update completed at $now"

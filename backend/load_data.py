@@ -7,14 +7,16 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 from models import mapper_registry, Posts
 
-subreddits_to_load = ["robinhoodpennystocks", "pennystocks"]
-posts_to_load = 1000
+subreddits_to_load = ["StockMarket", "pennystocks", "stocks","wallstreetbets","MillennialBets",\
+                      "PennyStocks","Investing","Smallstreetbets",]
+#subreddits_to_load = ["wallstreetbets", "stocks"]
+posts_to_load = 5000
 
 
 engine = create_engine('sqlite:///data.db', convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
-                                         bind=engine))
+                                          bind=engine))
 
 
 def load_data(subreddits, count):
@@ -30,7 +32,8 @@ def load_data(subreddits, count):
         "title": post.title,
         "score": post.score,
         "commentCount": post.num_comments,
-        "upvoteRatio": post.upvote_ratio} for post in tqdm(posts_query, desc="Querying Reddit API", total=count)]
+        "upvoteRatio": post.upvote_ratio,
+        "text": post.selftext} for post in tqdm(posts_query, desc="Querying Reddit API", total=count)]
     queried_at = datetime.utcnow()
 
     p = Posts(subreddits, date=queried_at, posts=posts)
@@ -41,7 +44,8 @@ def load_data(subreddits, count):
 
 if __name__ == '__main__':
     mapper_registry.metadata.create_all(bind=engine)
+
     load_data("+".join(subreddits_to_load), count=posts_to_load)
     
-    print("Cleaning up old data")
-    db_session.query(Posts).where(Posts.date < (date.today() - timedelta(days=7))).delete()
+#    print("Cleaning up old data")
+#    db_session.query(Posts).where(Posts.date < (date.today() - timedelta(days=7))).delete()
